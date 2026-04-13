@@ -1,46 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-ccc-app`](https://github.com/CKBFansDAO/create-ccc-app) 
+# CKB NoteBoard
 
-## Getting Started
+A simple onchain note board built on the [Nervos CKB](https://www.nervos.org/) Layer 1 blockchain. Write a short message and store it permanently on CKB — no backend, no database, just the chain.
 
-First, run the development server:
+## What it demonstrates
+
+### The Cell Model
+CKB uses a generalized UTXO model called the **Cell Model**. Every piece of state on CKB lives in a cell. This app writes each note into a cell's data field directly onchain. Once confirmed, that cell  and your note  exists on the blockchain permanently.
+
+### Storage economics (1 CKB = 1 byte)
+CKB enforces a direct relationship between tokens and storage: **1 CKB = 1 byte of on-chain space**. When you post a note, the app calculates the exact byte size of your note data plus the cell overhead (61 bytes for lock script + capacity field), and requires that amount of CKB as the cell's capacity. You can see this live in the cost estimate before submitting.
+
+### Lock scripts
+Each note cell is locked with the standard **Secp256k1Blake160** lock using a keyless burn address (all-zero args). This means the CKB locked in the cell is unspendable  a deliberate design choice that makes note storage permanent and tamper-proof.
+
+### Transaction construction with CCC
+The app uses [CCC](https://docs.ckbccc.com/) (`@ckb-ccc/connector-react`) to:
+- Connect to wallets (JoyID, MetaMask, UniSat, OKX)
+- Build and sign CKB transactions in the browser
+- Query the CKB indexer for all note cells on-chain
+
+## Getting started
+
+### 1. Get testnet CKB
+Connect your wallet (JoyID recommended — [joy.id](https://joy.id)), then claim testnet tokens from the [Pudge faucet](https://faucet.nervos.org). You'll receive 10,000 CKB, enough for dozens of notes.
+
+### 2. Run the app
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Default | Description |
+|---|---|---|
+| `NEXT_PUBLIC_IS_MAINNET` | `false` | Set to `"true"` to switch to CKB mainnet |
 
-## Learn More
+## Project structure
 
-### Next.js
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  page.tsx              # Main page — note feed and submission form
+  layoutProvider.tsx    # CCC Provider with testnet/mainnet toggle
+lib/
+  noteBoard.ts          # CKB transaction logic (submit + fetch notes)
+components/
+  NoteCard.tsx          # Individual note display
+  NoteForm.tsx          # Note submission form with live CKB cost estimate
+  ConnectWallet.tsx     # Wallet connect button with balance display
+utils/
+  stringUtils.ts        # Address truncation and formatting helpers
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Resources
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-
-### CCC
-To learn more about CCC, take a look at the following resources:
-
-- [CCC Documentation](https://docs.ckbccc.com/) - learn about CCC features and API.
-- [CCC Demo](https://app.ckbccc.com) - Code examples for invoking CCC in various use cases.
-
-You can check out [the CCC GitHub repository](https://github.com/ckb-devrel/ccc) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Nervos CKB docs](https://docs.nervos.org)
+- [CCC documentation](https://docs.ckbccc.com)
+- [CKB Pudge testnet explorer](https://pudge.explorer.nervos.org)
+- [Pudge faucet](https://faucet.nervos.org)
