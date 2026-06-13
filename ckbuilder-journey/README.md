@@ -15,13 +15,18 @@ A running record of what I have been building on the Nervos CKB ecosystem — ap
 ckbuilder-journey/
   README.md
   reports/
-    project-01-ckb-noteboard.md
-    project-02-xudt-issuer.md
+    week-01.md                      ← Setup, Cell Model, first testnet tx
+    week-02.md                      ← CKB NoteBoard built and deployed
+    week-03.md                      ← xUDT theory, token encoding, mint flow
+    week-04.md                      ← xUDT Issuer completed, transfer, debugging
+    project-01-ckb-noteboard.md     ← Deep dive: NoteBoard architecture
+    project-02-xudt-issuer.md       ← Deep dive: xUDT Issuer architecture
 ```
 
 ## What Goes Where
 
-- `reports/` contains one report per project or experiment shipped.
+- `reports/week-XX.md` — weekly progress reports (courses, key learnings, practical work)
+- `reports/project-XX.md` — deep-dive project reports per shipped app
 
 ## Primary References
 
