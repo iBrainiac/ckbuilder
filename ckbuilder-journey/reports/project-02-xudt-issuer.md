@@ -2,7 +2,7 @@
 
 **Project:** `apps/xudt-issuer`  
 **Status:** Shipped (testnet)  
-**Date:** June 2026  
+**Date:** May 2026  
 **Stack:** Next.js 14, TypeScript, CCC (`@ckb-ccc/connector-react`), Tailwind CSS  
 
 ---
@@ -11,7 +11,7 @@
 
 A token issuance and transfer dashboard running on the Nervos CKB testnet. Connect your wallet, mint your own xUDT token, check your balance, and transfer tokens to any CKB address — no contract deployment, no backend, no database.
 
-The app is a direct step up from the NoteBoard: instead of storing arbitrary bytes, it stores token amounts governed by a Type Script that enforces conservation rules.
+
 
 Live at: [http://localhost:3001](http://localhost:3001) (run `npm run dev` in `apps/xudt-issuer`)
 
@@ -122,7 +122,7 @@ Each xUDT cell requires a minimum of **146 CKB** of capacity:
 | Cell data (16-byte amount) | 16 |
 | **Total** | **146** |
 
-This CKB is not spent — it is locked inside the cell and returned to the sender as capacity when the cell is consumed in a transfer.
+This CKB is not spent   it is locked inside the cell and returned to the sender as capacity when the cell is consumed in a transfer.
 
 ---
 

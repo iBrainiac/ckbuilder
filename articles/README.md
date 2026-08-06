@@ -6,6 +6,7 @@ Articles written by [@hazardcryptos](https://paragraph.com/@hazardcryptos@gmail.
 
 | Date | Title | Tags |
 |------|-------|------|
+| 2026-08-06 | [Fiber Network: Nervos's Answer to Instant, Near-Free Crypto Payments](./2026-08-06-ckb-fiber-network-instant-near-free-payments.md) | fiber, layer-2, payments |
 | 2026-06-04 | [Is CKB Ready for Blockchain's Quantum Computing Threat?](./2026-06-04-ckb-quantum-computing-threat.md) | quantum, cryptography, security |
 | 2026-05-28 | [Mining CKB on the Nervos Network: A Complete Guide for 2026](./2026-05-28-mining-ckb-complete-guide-2026.md) | mining, profitability, hardware |
 | 2026-05-17 | [How to Mine CKB: The Complete Beginner's Guide to Mining on Nervos](./2026-05-17-how-to-mine-ckb-beginners-guide.md) | mining, beginners, proof-of-work |
