@@ -21,11 +21,15 @@ ckbuilder-journey/
     week-04.md                      ← xUDT Issuer completed, transfer, debugging
     project-01-ckb-noteboard.md     ← Deep dive: NoteBoard architecture
     project-02-xudt-issuer.md       ← Deep dive: xUDT Issuer architecture
+    project-03-fiber-fit.md         ← Deep dive: Fiber Fit (squad stakes)
+    august-sept/                    ← Aug–Sep 2026 builder track
+      week-01.md                    ← Fiber study, Fiber Fit (CKB stakes, hosted join code)
 ```
 
 ## What Goes Where
 
-- `reports/week-XX.md` — weekly progress reports (courses, key learnings, practical work)
+- `reports/week-XX.md` — May 2026 weekly reports (weeks 1–4)
+- `reports/august-sept/week-XX.md` — Aug–Sep 2026 weekly reports (courses, key learnings, practical work)
 - `reports/project-XX.md` — deep-dive project reports per shipped app
 
 ## Primary References

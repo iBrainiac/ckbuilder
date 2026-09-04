@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fiber
+      POSTGRES_PASSWORD: fiber
+      POSTGRES_DB: fiberfit
+    ports:
+      - "5432:5432"
+    volumes:
+      - fiberfit-pg:/var/lib/postgresql/data
+
+volumes:
+  fiberfit-pg:

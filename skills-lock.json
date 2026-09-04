@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "skills": {
+    "ckb-ccc-examples-finder": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-examples-finder/SKILL.md",
+      "computedHash": "f8af14613d7839075eeef9671ebc41ea4041c2746e491a7a659567328a0d02cc"
+    },
+    "ckb-ccc-fundamentals": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-fundamentals/SKILL.md",
+      "computedHash": "78514ab8c9f082300385297cd5efe7a99d15de9bebc873bfa88a8c1c0c676b76"
+    },
+    "ckb-ccc-playground": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-playground/SKILL.md",
+      "computedHash": "b1a73cd8f31eb43c728f60e46f5f700e9ed4592727644ce62e89a33028cf8d74"
+    },
+    "ckb-ccc-signer-setup": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-signer-setup/SKILL.md",
+      "computedHash": "582ff264c624422a08161e79e168d1ea8e051525ecbfeea5bc6b37b3b05566f2"
+    },
+    "ckb-ccc-spore": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-spore/SKILL.md",
+      "computedHash": "a60289600f28f4baf46b33291ee14619d3e6fc426289a6c82e271f4b865af5e9"
+    },
+    "ckb-ccc-transactions": {
+      "source": "ckb-devrel/ccc",
+      "sourceType": "github",
+      "skillPath": "skills/ckb-ccc-transactions/SKILL.md",
+      "computedHash": "d7be34549eeefb00337c61e27ad160e0107878980480643eba49c28739325b36"
+    }
+  }
+}
