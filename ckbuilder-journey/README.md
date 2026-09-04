@@ -23,7 +23,9 @@ ckbuilder-journey/
     project-02-xudt-issuer.md       ← Deep dive: xUDT Issuer architecture
     project-03-fiber-fit.md         ← Deep dive: Fiber Fit (squad stakes)
     august-sept/                    ← Aug–Sep 2026 builder track
-      week-01.md                    ← Fiber study, Fiber Fit (CKB stakes, hosted join code)
+      week-01.md                    ← Fiber study, Fiber Fit v1 (landing, local pact, CCC lock)
+      week-02.md                    ← Sign-in, invite squads, PGlite, product README
+      week-03.md                    ← In progress: shared challenges, hosting, then contract
 ```
 
 ## What Goes Where
