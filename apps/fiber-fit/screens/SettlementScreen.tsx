@@ -60,7 +60,7 @@ export default function SettlementScreen({ challenge }: { challenge: Challenge }
           return (
             <li
               key={p.memberId}
-              className={`flex items-center justify-between rounded-[20px] border px-4 py-3 ${you ? "border-lime" : "border-hairline"}`}
+              className={`flex items-center justify-between rounded-[20px] glass-card px-4 py-3 ${you ? "ring-1 ring-lime" : ""}`}
             >
               <span className="text-[14px] font-medium text-paper">
                 {member.name}

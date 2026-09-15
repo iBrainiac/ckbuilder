@@ -2,9 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import Wordmark from "@/components/Wordmark";
 import SealButton from "@/components/SealButton";
 import ConnectWallet from "@/components/ConnectWallet";
+import { WalletHelp } from "@/components/WalletHelp";
 import { useFitStore } from "@/lib/store";
 import { useChainBalance } from "@/lib/useChainBalance";
 import { createSquadRemote } from "@/lib/api";
@@ -48,18 +48,17 @@ export default function CreateSquadScreen({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex min-h-[70vh] flex-col justify-end px-1 pb-4">
+    <form onSubmit={onSubmit} className="flex min-h-[50vh] flex-col justify-end px-1 pb-4 md:min-h-[40vh] md:justify-center">
       {onClose ? (
         <button type="button" onClick={onClose} className="self-end text-[13px] text-fog">
           Close
         </button>
-      ) : (
-        <Wordmark />
-      )}
+      ) : null}
       <p className="mt-8 text-[15px] text-fog">Create a squad, then share the invite.</p>
       {!signer ? (
         <div className="mt-6">
           <ConnectWallet />
+          <WalletHelp needWallet />
         </div>
       ) : null}
       <label className="mt-6 block text-[11px] uppercase tracking-[0.16em] text-fog">
@@ -68,7 +67,7 @@ export default function CreateSquadScreen({
           required
           value={squad}
           onChange={(e) => setSquad(e.target.value)}
-          className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[16px] text-paper outline-none focus:border-lime"
+          className="glass-field mt-2 h-14 w-full rounded-[20px] px-4 text-[16px] text-paper"
         />
       </label>
       <label className="mt-4 block text-[11px] uppercase tracking-[0.16em] text-fog">
@@ -77,7 +76,7 @@ export default function CreateSquadScreen({
           required
           value={me}
           onChange={(e) => setMe(e.target.value)}
-          className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[16px] text-paper outline-none focus:border-lime"
+          className="glass-field mt-2 h-14 w-full rounded-[20px] px-4 text-[16px] text-paper"
         />
       </label>
       {error ? <p className="mt-3 text-[13px] text-blood">{error}</p> : null}
@@ -92,7 +91,7 @@ export default function CreateSquadScreen({
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           placeholder="XK4P2M7Q"
-          className="h-12 min-w-0 flex-1 rounded-[20px] border border-hairline bg-panel px-4 font-mono text-[13px] text-paper outline-none focus:border-lime"
+          className="glass-field h-12 min-w-0 flex-1 rounded-[20px] px-4 font-mono text-[13px] text-paper"
         />
         <button
           type="button"

@@ -5,6 +5,8 @@ import SealButton from "@/components/SealButton";
 import { useFitStore } from "@/lib/store";
 import { formatCkb, settlePayouts } from "@/lib/settlement";
 import { confirmsOf, memberMap, outboundPayouts, potOf, projected, selfId } from "@/lib/selectors";
+import { hasLocked } from "@/lib/challenge-status";
+import { confirmBoardRemote } from "@/lib/api";
 import { sendPayouts, txErrorMessage } from "@/lib/ckb";
 import { useChainBalance } from "@/lib/useChainBalance";
 import { Sheet } from "@/components/Sheet";
@@ -12,7 +14,7 @@ import { Sheet } from "@/components/Sheet";
 export default function ConfirmSheet() {
   const overlay = useFitStore((s) => s.overlay);
   const setOverlay = useFitStore((s) => s.setOverlay);
-  const confirm = useFitStore((s) => s.confirm);
+  const replaceBoard = useFitStore((s) => s.replaceBoard);
   const selectedId = useFitStore((s) => s.selectedChallengeId);
   const snap = useFitStore();
   const { signer, address, refresh } = useChainBalance();
@@ -29,9 +31,12 @@ export default function ConfirmSheet() {
   const members = memberMap(snap);
   const boardId = board.id;
   const pendingOut = outboundPayouts(preview.payouts, members, address);
+  const selfLocked = me ? hasLocked(board, me) : false;
+  const already = me ? confirmed.includes(me) : false;
 
-  async function confirmAs(memberId: string) {
-    const nextCount = confirmed.includes(memberId) ? confirmed.length : confirmed.length + 1;
+  async function confirmSelf() {
+    if (!me || !selfLocked || already) return;
+    const nextCount = confirmed.length + 1;
     const willSettle = nextCount >= needed;
     setBusy(true);
     setError("");
@@ -46,7 +51,8 @@ export default function ConfirmSheet() {
         hash = await sendPayouts(signer, pendingOut);
         await refresh();
       }
-      confirm(boardId, memberId, hash);
+      const next = await confirmBoardRemote(boardId, hash);
+      replaceBoard(next);
       const ch = useFitStore.getState().challenges.find((c) => c.id === boardId);
       if (ch?.status === "settled") setOverlay("none");
     } catch (err) {
@@ -87,7 +93,7 @@ export default function ConfirmSheet() {
           if (!member) return null;
           const done = confirmed.includes(id);
           return (
-            <li key={id} className="flex items-center justify-between rounded-[16px] border border-hairline px-3 py-2">
+            <li key={id} className="flex items-center justify-between rounded-[16px] glass-card px-3 py-2">
               <span className="text-[13px] text-paper">
                 {member.name}
                 {id === me ? " · you" : ""}
@@ -95,14 +101,7 @@ export default function ConfirmSheet() {
               {done ? (
                 <span className="text-[11px] uppercase tracking-[0.14em] text-mint">Confirmed</span>
               ) : (
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void confirmAs(id)}
-                  className="text-[12px] font-medium text-lime disabled:opacity-40"
-                >
-                  Confirm
-                </button>
+                <span className="text-[11px] uppercase tracking-[0.14em] text-fog">Waiting</span>
               )}
             </li>
           );
@@ -110,10 +109,10 @@ export default function ConfirmSheet() {
       </ul>
       <div className="mt-6">
         <SealButton
-          onClick={() => me && void confirmAs(me)}
-          disabled={!me || busy || (me ? confirmed.includes(me) : false)}
+          onClick={() => void confirmSelf()}
+          disabled={!me || !selfLocked || busy || already}
         >
-          {busy ? "Signing…" : "Confirm as you"}
+          {!selfLocked ? "Lock before you confirm" : busy ? "Signing…" : "Confirm as you"}
         </SealButton>
       </div>
     </Sheet>

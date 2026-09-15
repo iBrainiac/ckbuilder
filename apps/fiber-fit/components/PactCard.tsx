@@ -21,6 +21,9 @@ export default function PactCard({
   barReady,
   onOpen,
   onSeal,
+  locked,
+  onLock,
+  lockBusy,
 }: {
   challenge: Challenge;
   todayValue: number;
@@ -34,11 +37,14 @@ export default function PactCard({
   barReady: boolean;
   onOpen: () => void;
   onSeal: () => void;
+  locked?: boolean;
+  onLock?: () => void;
+  lockBusy?: boolean;
 }) {
   const pct = Math.min(100, Math.round((todayValue / Math.max(target, 1)) * 100));
 
   return (
-    <article className="rounded-[20px] border border-hairline bg-panel p-4">
+    <article className="glass-card rounded-[20px] p-4">
       <button type="button" onClick={onOpen} className="w-full text-left">
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-[17px] font-semibold tracking-tight text-paper">{challenge.name}</h2>
@@ -69,7 +75,11 @@ export default function PactCard({
         </div>
       </button>
       <div className="mt-4">
-        {sealedAt ? (
+        {!locked ? (
+          <SealButton onClick={onLock} disabled={lockBusy || !onLock}>
+            {lockBusy ? "Signing…" : "Lock your stake"}
+          </SealButton>
+        ) : sealedAt ? (
           <p className="h-14 rounded-full border border-hairline text-center text-[13px] font-medium leading-[56px] text-fog">
             Sealed {sealedAt}
           </p>

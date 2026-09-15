@@ -8,6 +8,8 @@ import TabBar from "@/components/TabBar";
 import ConfirmSheet from "@/components/ConfirmSheet";
 import ConnectWallet from "@/components/ConnectWallet";
 import AuthGate from "@/components/AuthGate";
+import LogoutButton from "@/components/LogoutButton";
+import { AppShell } from "@/components/AppShell";
 import HomeScreen from "@/screens/HomeScreen";
 import BoardScreen from "@/screens/BoardScreen";
 import SquadsScreen from "@/screens/SquadsScreen";
@@ -42,45 +44,84 @@ function Shell() {
 
   if (squads.length === 0) {
     return (
-      <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-void px-4 pt-[calc(14px+env(safe-area-inset-top))]">
+      <AppShell
+        header={
+          <>
+            <Link href="/" className="block">
+              <Wordmark />
+            </Link>
+            <div className="flex items-center gap-3">
+              <ConnectWallet compact />
+              <LogoutButton />
+            </div>
+          </>
+        }
+      >
         <CreateSquadScreen />
-      </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-void">
-      <header className="flex items-center justify-between gap-3 px-5 pb-3 pt-[calc(14px+env(safe-area-inset-top))]">
-        <Link href="/" className="block">
-          <Wordmark />
-        </Link>
-        <div className="flex items-center gap-3">
-          <ConnectWallet compact />
-          <AvatarStack names={names} />
-        </div>
-      </header>
-      <div className="min-h-0 flex-1 overflow-y-auto px-4">
-        {tab === "home" ? <HomeScreen /> : null}
-        {tab === "board" ? <BoardScreen /> : null}
-        {tab === "squads" ? <SquadsScreen /> : null}
-        {tab === "vault" ? <VaultScreen /> : null}
-      </div>
-      <TabBar />
+    <>
+    <AppShell
+      sidebar={
+        <>
+          <Link href="/" className="block">
+            <Wordmark />
+          </Link>
+          <TabBar vertical />
+          <div className="mt-auto space-y-3 pt-8">
+            <ConnectWallet compact />
+            <LogoutButton className="w-full" />
+          </div>
+        </>
+      }
+      header={
+        <>
+          <Link href="/" className="block lg:hidden">
+            <Wordmark />
+          </Link>
+          <p className="hidden text-[13px] font-medium text-fog lg:block">
+            {tab === "home" ? "Home" : tab === "board" ? "Board" : tab === "squads" ? "Squads" : "Vault"}
+          </p>
+          <div className="ml-auto flex items-center gap-3">
+            <ConnectWallet compact />
+            <LogoutButton className="lg:hidden" />
+            <AvatarStack names={names} />
+          </div>
+        </>
+      }
+      footer={<TabBar />}
+    >
+      {tab === "home" ? <HomeScreen /> : null}
+      {tab === "board" ? <BoardScreen /> : null}
+      {tab === "squads" ? <SquadsScreen /> : null}
+      {tab === "vault" ? <VaultScreen /> : null}
+    </AppShell>
       <ConfirmSheet />
       <CreateChallengeScreen />
       {overlay === "squad" ? (
-        <div className="absolute inset-0 z-30 overflow-y-auto bg-void px-5 pt-6">
-          <CreateSquadScreen onClose={() => setOverlay("none")} />
+        <div className="fixed inset-0 z-30 overflow-y-auto bg-void/55 backdrop-blur-md">
+          <div className="mx-auto min-h-dvh w-full max-w-[520px] px-5 pt-6 md:flex md:min-h-dvh md:items-start md:pt-10">
+            <div className="w-full md:rounded-[28px] md:glass-pane md:px-6 md:py-6">
+              <CreateSquadScreen onClose={() => setOverlay("none")} />
+            </div>
+          </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
 
 export default function FitApp() {
   const hydrated = useHasHydrated();
   if (!hydrated) {
-    return <div className="min-h-dvh bg-void" />;
+    return (
+      <div className="relative min-h-dvh bg-void">
+        <div className="app-orb app-orb-a" />
+      </div>
+    );
   }
   return (
     <AuthGate>

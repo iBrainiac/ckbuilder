@@ -1,5 +1,11 @@
-import type { Squad } from "@/lib/types";
+import type { Challenge, Checkin, Settlement, Squad } from "@/lib/types";
 import type { Signer } from "@ckb-ccc/core";
+
+export type BoardPayload = {
+  challenges: Challenge[];
+  checkins: Checkin[];
+  settlements: Settlement[];
+};
 
 async function parseJson<T>(res: Response): Promise<T> {
   const data = (await res.json()) as T & { error?: string };
@@ -77,4 +83,77 @@ export async function joinSquadRemote(code: string, displayName: string): Promis
 export async function fetchInvite(code: string): Promise<{ name: string; memberCount: number; code: string }> {
   const res = await fetch(`/api/invite/${encodeURIComponent(code)}`);
   return parseJson(res);
+}
+
+export async function fetchBoard(): Promise<BoardPayload> {
+  const res = await fetch("/api/challenges", { credentials: "include" });
+  return parseJson(res);
+}
+
+export async function createChallengeRemote(input: {
+  squadId: string;
+  name: string;
+  fiber: string;
+  bar: number;
+  unit: string;
+  customRule?: string;
+  minDuration?: number;
+  days: number;
+  stakeCkb: number;
+  startDate: string;
+  lockTxHash: string;
+  potAddress?: string;
+}) {
+  const res = await fetch("/api/challenges", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(input),
+  });
+  return parseJson<BoardPayload & { id: string }>(res);
+}
+
+export async function lockChallengeRemote(id: string, txHash: string) {
+  const res = await fetch(`/api/challenges/${id}/lock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ txHash }),
+  });
+  return parseJson<BoardPayload>(res);
+}
+
+export async function sealDayRemote(
+  id: string,
+  dayIndex: number,
+  proofValue?: number,
+  proofMinutes?: number
+) {
+  const res = await fetch(`/api/challenges/${id}/seal`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ dayIndex, proofValue, proofMinutes }),
+  });
+  return parseJson<BoardPayload>(res);
+}
+
+export async function missDayRemote(id: string, dayIndex: number) {
+  const res = await fetch(`/api/challenges/${id}/miss`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ dayIndex }),
+  });
+  return parseJson<BoardPayload>(res);
+}
+
+export async function confirmBoardRemote(id: string, payoutTxHash?: string) {
+  const res = await fetch(`/api/challenges/${id}/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ payoutTxHash }),
+  });
+  return parseJson<BoardPayload>(res);
 }

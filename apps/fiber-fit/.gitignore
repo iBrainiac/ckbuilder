@@ -7,3 +7,9 @@ out/
 .DS_Store
 *.tsbuildinfo
 .data/
+.agents/
+.claude/
+skills-lock.json
+remainingwork.md
+script2.md
+

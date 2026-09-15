@@ -12,8 +12,9 @@ Dev: [http://localhost:3002](http://localhost:3002) (landing) · [http://localho
 - Identity: CKB address after `signMessage`. Session cookie `ff_session` (7 days). No email.
 - Squads: create, invite code, join at `/app/join/[code]`, shared roster (Drizzle).
 - Local data: file Postgres in `.data/fiberfit` (PGlite) when `DATABASE_URL` is unset or localhost is down.
-- Challenges, seals, confirm, settlement **math** on this device (`localStorage` key `fiber-fit-v3`).
-- **Lock and open** sends integer CKB (≥ 62) to the squad pot. Vault is live `signer.getBalance()`.
+- Challenges, seals, confirm, settlement **math** on the server. Clients share one board.
+- Local cache: selected squad/challenge only (`fiber-fit-v4`). Proof drafts stay in memory until seal.
+- **Lock and open** sends integer CKB (≥ 62) to the squad pot. Each other member locks from Home. Vault is live `signer.getBalance()`.
 - Confirm can pay other members who have addresses. Self is skipped.
 - Pot today is the **creator’s address** (custodial escrow). Not a contract.
 
@@ -33,21 +34,23 @@ Squads already sync. Challenges do not. Two phones on the same invite still see 
 
 **Goal:** one challenge, one board, every member only seals themselves.
 
-- [ ] Tables: `challenges`, `checkins`, `confirmations` (and maybe `settlements`). Tie them to `squads.id` and member `address`.
-- [ ] APIs: create challenge, list by squad, set proof, seal self, miss self, confirm, read board.
-- [ ] Remove or hide board tap-to-seal **other** people. That is local-demo only.
-- [ ] Block adding members after a challenge is live (roster snapshot already exists on `memberIds`).
-- [ ] After lock, persist `lockTxHash` on the server so every client sees it.
-- [ ] Stop treating `localStorage` as source of truth for challenges. Keep it as cache at most.
-- [ ] Empty / error / offline states: do not flash “no squad” before fetch finishes.
+- [x] Tables: `challenges`, `checkins`, `confirmations` (and maybe `settlements`). Tie them to `squads.id` and member `address`.
+- [x] APIs: create challenge, list by squad, set proof, seal self, miss self, confirm, read board.
+- [x] Remove or hide board tap-to-seal **other** people. That is local-demo only.
+- [x] Block adding members after a challenge is live (roster snapshot already exists on `memberIds`).
+- [x] After lock, persist `lockTxHash` on the server so every client sees it.
+- [x] Stop treating `localStorage` as source of truth for challenges. Keep it as cache at most.
+- [x] Empty / error / offline states: do not flash “no squad” before fetch finishes.
 
 **Lock money in this slice (still no contract):**
 
-- [ ] Each member sends **their own** stake tx to the pot address (creator, for now). Not “creator pays for everyone.”
-- [ ] Challenge stays `open` only after that member’s lock tx is in. Show who has locked and who has not.
-- [ ] Do not let someone seal days until they have locked.
+- [x] Each member sends **their own** stake tx to the pot address (creator, for now). Not “creator pays for everyone.”
+- [x] Challenge stays `open` only after that member’s lock tx is in. Show who has locked and who has not.
+- [x] Do not let someone seal days until they have locked.
 
 Done when: two wallets, one invite, same challenge, each person seals only their row, both see the same cells.
+
+**Done / 2026-09-15** — board is server-backed. Smoke: two wallets, one invite, same cells, self-only seal.
 
 ---
 

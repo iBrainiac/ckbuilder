@@ -1,6 +1,7 @@
 import type { Challenge, FitSnapshot, Member, Payout } from "./types";
 import { dayIndex } from "./time";
 import { findCheckin, isMissed, isSealed, memberCompleted } from "./settlement";
+import { hasLocked } from "./challenge-status";
 import { MIN_CELL_CKB } from "./ckb";
 
 export function squadById(s: FitSnapshot, id: string | null) {
@@ -54,7 +55,7 @@ export function projected(s: FitSnapshot, ch: Challenge) {
 export function vault(s: FitSnapshot, chainCkb: number | null) {
   const me = selfId(s);
   const locked = s.challenges
-    .filter((c) => c.status !== "settled" && me && c.memberIds.includes(me))
+    .filter((c) => c.status !== "settled" && me && hasLocked(c, me))
     .reduce((n, c) => n + c.stakeCkb, 0);
   const earned = s.settlements.reduce((n, st) => {
     const ch = s.challenges.find((c) => c.id === st.challengeId);

@@ -10,6 +10,8 @@ import { ccc } from "@ckb-ccc/connector-react";
 import { useChainBalance } from "@/lib/useChainBalance";
 import { fetchInvite, fetchMe, joinSquadRemote, signInWithSigner } from "@/lib/api";
 import { useFitStore } from "@/lib/store";
+import { AuthFrame } from "@/components/AppShell";
+import { WalletHelp } from "@/components/WalletHelp";
 import { txErrorMessage } from "@/lib/ckb";
 
 export default function JoinScreen({ code }: { code: string }) {
@@ -58,14 +60,14 @@ export default function JoinScreen({ code }: { code: string }) {
   }
 
   return (
-    <div className="relative mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-void px-5 pt-[calc(14px+env(safe-area-inset-top))]">
+    <AuthFrame>
       <div className="flex items-center justify-between">
         <Link href="/">
           <Wordmark />
         </Link>
         <ConnectWallet compact />
       </div>
-      <form onSubmit={onJoin} className="mt-auto flex flex-col pb-8">
+      <form onSubmit={onJoin} className="mt-auto flex flex-col pb-8 md:mt-16 md:pb-0">
         <p className="text-[11px] uppercase tracking-[0.16em] text-fog">Invite</p>
         <h1 className="mt-2 text-[22px] font-semibold tracking-tight text-paper">
           {preview?.name ?? "…"}
@@ -81,13 +83,16 @@ export default function JoinScreen({ code }: { code: string }) {
             required
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[16px] text-paper outline-none focus:border-lime"
+            className="glass-field mt-2 h-14 w-full rounded-[20px] px-4 text-[16px] text-paper"
           />
         </label>
         {error ? <p className="mt-3 text-[13px] text-blood">{error}</p> : null}
         <div className="mt-8">
           {!signer ? (
-            <SealButton onClick={open}>Connect wallet to join</SealButton>
+            <>
+              <SealButton onClick={open}>Sign in to join</SealButton>
+              <WalletHelp needWallet />
+            </>
           ) : (
             <SealButton type="submit" disabled={busy}>
               {busy ? "Joining…" : needSign ? "Sign and join" : "Join squad"}
@@ -98,6 +103,6 @@ export default function JoinScreen({ code }: { code: string }) {
           Back to app
         </Link>
       </form>
-    </div>
+    </AuthFrame>
   );
 }

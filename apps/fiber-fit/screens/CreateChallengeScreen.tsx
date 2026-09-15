@@ -9,6 +9,8 @@ import { useFitStore } from "@/lib/store";
 import { useChainBalance } from "@/lib/useChainBalance";
 import FiberChip from "@/components/FiberChip";
 import SealButton from "@/components/SealButton";
+import { WalletHelp } from "@/components/WalletHelp";
+import { createChallengeRemote } from "@/lib/api";
 import { unitsForFiber, ymd } from "@/lib/time";
 
 const LENGTHS = [7, 14, 30] as const;
@@ -18,7 +20,8 @@ export default function CreateChallengeScreen() {
   const setOverlay = useFitStore((s) => s.setOverlay);
   const squads = useFitStore((s) => s.squads);
   const selectedSquadId = useFitStore((s) => s.selectedSquadId);
-  const createChallenge = useFitStore((s) => s.createChallenge);
+  const replaceBoard = useFitStore((s) => s.replaceBoard);
+  const setTab = useFitStore((s) => s.setTab);
   const { signer, ckb, address, refresh } = useChainBalance();
   const { open } = ccc.useCcc();
 
@@ -67,7 +70,7 @@ export default function CreateChallengeScreen() {
     try {
       const potAddress = squad.potAddress ?? address;
       const lockTxHash = await sendCkb(signer, potAddress, stakeN);
-      const result = createChallenge({
+      const board = await createChallengeRemote({
         squadId: squad.id,
         name,
         fiber,
@@ -81,7 +84,9 @@ export default function CreateChallengeScreen() {
         lockTxHash,
         potAddress,
       });
-      if (result.error) setError(result.error);
+      replaceBoard(board);
+      setOverlay("none");
+      setTab("home");
       await refresh();
     } catch (err) {
       setError(txErrorMessage(err));
@@ -91,7 +96,9 @@ export default function CreateChallengeScreen() {
   }
 
   return (
-    <div className="absolute inset-0 z-30 overflow-y-auto bg-void px-5 pb-10 pt-6">
+    <div className="fixed inset-0 z-30 overflow-y-auto bg-void/55 backdrop-blur-md">
+      <div className="mx-auto w-full max-w-[520px] px-5 pb-10 pt-6 md:py-10">
+        <div className="md:rounded-[28px] md:glass-pane md:px-7 md:py-6">
       <div className="flex items-center justify-between">
         <h1 className="text-[22px] font-semibold text-paper">New challenge</h1>
         <button type="button" onClick={() => setOverlay("none")} className="text-[13px] text-fog">
@@ -104,7 +111,7 @@ export default function CreateChallengeScreen() {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[16px] text-paper outline-none focus:border-lime"
+          className="mt-2 h-14 w-full rounded-[20px] glass-field px-4 text-[16px] text-paper outline-none focus:border-lime"
         />
       </label>
 
@@ -175,7 +182,7 @@ export default function CreateChallengeScreen() {
             value={bar}
             onChange={(e) => setBar(e.target.value)}
             inputMode="numeric"
-            className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 font-serif text-[28px] text-paper outline-none tabular-nums focus:border-lime"
+            className="mt-2 h-14 w-full rounded-[20px] glass-field px-4 font-serif text-[28px] text-paper outline-none tabular-nums focus:border-lime"
           />
         </label>
       ) : null}
@@ -187,7 +194,7 @@ export default function CreateChallengeScreen() {
             value={minDuration}
             onChange={(e) => setMinDuration(e.target.value)}
             inputMode="numeric"
-            className="mt-2 h-12 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[15px] text-paper outline-none"
+            className="mt-2 h-12 w-full rounded-[20px] glass-field px-4 text-[15px] text-paper outline-none"
           />
         </label>
       ) : null}
@@ -197,7 +204,7 @@ export default function CreateChallengeScreen() {
           value={rule}
           onChange={(e) => setRule(e.target.value)}
           placeholder="Rule text"
-          className="mt-4 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[15px] text-paper outline-none"
+          className="mt-4 h-14 w-full rounded-[20px] glass-field px-4 text-[15px] text-paper outline-none"
         />
       ) : null}
 
@@ -207,7 +214,7 @@ export default function CreateChallengeScreen() {
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 text-[15px] text-paper outline-none"
+          className="mt-2 h-14 w-full rounded-[20px] glass-field px-4 text-[15px] text-paper outline-none"
         />
       </label>
 
@@ -217,13 +224,13 @@ export default function CreateChallengeScreen() {
           value={stake}
           onChange={(e) => setStake(e.target.value)}
           inputMode="numeric"
-          className="mt-2 h-14 w-full rounded-[20px] border border-hairline bg-panel px-4 font-serif text-[28px] text-mint outline-none tabular-nums focus:border-lime"
+          className="mt-2 h-14 w-full rounded-[20px] glass-field px-4 font-serif text-[28px] text-mint outline-none tabular-nums focus:border-lime"
         />
       </label>
 
-      <div className="mt-8 rounded-[20px] border border-hairline bg-panel p-4">
+      <div className="mt-8 rounded-[20px] glass-card p-4">
         <p className="text-[13px] text-fog">
-          {members} squad members will lock {formatCkb(stakeN)} CKB each
+          {members} squad members each send {formatCkb(stakeN)} CKB to the pot
         </p>
         <p className="mt-3 whitespace-nowrap font-serif text-[52px] leading-none text-paper tabular-nums">
           {formatCkb(pot)} CKB
@@ -235,8 +242,9 @@ export default function CreateChallengeScreen() {
         <p className="mt-2 text-[11px] text-fog">
           Wallet: {signer ? `${formatCkb(availableCkb)} CKB available` : "not connected"}
         </p>
+        {signer && availableCkb < Math.max(stakeN, MIN_CELL_CKB) ? <WalletHelp needFaucet /> : null}
         <p className="mt-1 text-[11px] text-fog">
-          Lock sends your stake to {squad?.potAddress ? "the squad pot" : "your address (pot)"}.
+          You lock now. Everyone else locks from Home with their own wallet.
         </p>
       </div>
 
@@ -248,8 +256,10 @@ export default function CreateChallengeScreen() {
             {busy ? "Signing…" : "Lock and open"}
           </SealButton>
         ) : (
-          <SealButton onClick={open}>Connect wallet to lock</SealButton>
+          <SealButton onClick={open}>Sign in to lock</SealButton>
         )}
+      </div>
+        </div>
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ export default function SquadsScreen() {
             <select
               value={squad.id}
               onChange={(e) => selectSquad(e.target.value)}
-              className="rounded-full border border-hairline bg-void px-3 py-1 text-[12px] text-paper"
+              className="glass-field rounded-full px-3 py-1 text-[12px] text-paper"
             >
               {squads.map((q) => (
                 <option key={q.id} value={q.id}>
@@ -69,7 +69,7 @@ export default function SquadsScreen() {
       </div>
 
       {squad.inviteCode ? (
-        <div className="mt-6 rounded-[20px] border border-hairline bg-panel px-4 py-4">
+        <div className="mt-6 glass-card rounded-[20px] px-4 py-4">
           <p className="text-[11px] uppercase tracking-[0.16em] text-fog">Invite</p>
           <p className="mt-2 font-mono text-[18px] tracking-[0.18em] text-lime">{squad.inviteCode}</p>
           <p className="mt-1 break-all font-mono text-[11px] text-fog">{inviteUrl}</p>
@@ -87,7 +87,7 @@ export default function SquadsScreen() {
         {squad.members.map((m) => (
           <li
             key={m.id}
-            className="flex items-center gap-3 rounded-[20px] border border-hairline bg-panel px-3 py-3"
+            className="flex items-center gap-3 rounded-[20px] glass-card px-3 py-3"
           >
             <Avatar name={m.name} size={36} ring={m.isSelf} />
             <p className="min-w-0 flex-1 text-[14px] font-medium text-paper">
@@ -107,11 +107,11 @@ export default function SquadsScreen() {
 
       <div className="mt-6">
         <p className="text-[11px] uppercase tracking-[0.16em] text-fog">Squad pot address</p>
-        <p className="mt-2 break-all rounded-[20px] border border-hairline bg-panel px-4 py-3 font-mono text-[12px] text-paper">
-          {squad.potAddress ? shortAddress(squad.potAddress) : "—"}
+        <p className="mt-2 break-all rounded-[20px] glass-card px-4 py-3 font-mono text-[12px] text-paper">
+          {squad.potAddress ? shortAddress(squad.potAddress) : "none"}
         </p>
         <p className="mt-2 text-[12px] leading-relaxed text-fog">
-          Locks go to the creator until a contract holds the pot.
+          Locks go to the creator until a contract holds the pot. A live challenge keeps the roster from when it opened.
         </p>
       </div>
 

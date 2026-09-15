@@ -1,7 +1,8 @@
 "use client";
 
 import { ccc } from "@ckb-ccc/connector-react";
-import { shortAddress } from "@/lib/ckb";
+import { shortAddress, MIN_CELL_CKB } from "@/lib/ckb";
+import { FaucetLink } from "@/components/WalletHelp";
 import { useChainBalance } from "@/lib/useChainBalance";
 
 export default function ConnectWallet({ compact = false }: { compact?: boolean }) {
@@ -19,7 +20,7 @@ export default function ConnectWallet({ compact = false }: { compact?: boolean }
             : "h-12 w-full rounded-full bg-lime text-[14px] font-semibold text-void"
         }
       >
-        Connect wallet
+        Sign in
       </button>
     );
   }
@@ -33,7 +34,7 @@ export default function ConnectWallet({ compact = false }: { compact?: boolean }
   }
 
   return (
-    <div className="rounded-[20px] border border-hairline bg-panel px-4 py-3">
+    <div className="glass-card rounded-[20px] px-4 py-3">
       <div className="flex items-center justify-between gap-3">
         <button type="button" onClick={open} className="min-w-0 text-left">
           <p className="text-[11px] uppercase tracking-[0.16em] text-fog">
@@ -49,6 +50,11 @@ export default function ConnectWallet({ compact = false }: { compact?: boolean }
       </div>
       {ckb != null ? (
         <p className="mt-3 font-serif text-[28px] leading-none text-mint tabular-nums">{ckb.toLocaleString("en-US")} CKB</p>
+      ) : null}
+      {ckb != null && ckb < MIN_CELL_CKB ? (
+        <p className="mt-2 text-[12px] text-fog">
+          Too little for a lock. <FaucetLink />
+        </p>
       ) : null}
     </div>
   );

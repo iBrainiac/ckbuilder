@@ -16,7 +16,7 @@ const serif = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: "Fiber Fit",
-  description: "Private squad pacts. Same stake. Same fiber. Lock CKB, seal the day, split what missers leave.",
+  description: "Private squad pacts on Nervos CKB. Same stake. Same fiber. Lock CKB, seal the day, split what missers leave.",
   openGraph: {
     title: "Fiber Fit",
     description: "Private squad pacts. Same stake. Same fiber.",

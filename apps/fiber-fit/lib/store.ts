@@ -49,6 +49,7 @@ type FitActions = {
   setPotAddress: (squadId: string, potAddress: string) => void;
   selectSquad: (id: string | null) => void;
   replaceSquads: (squads: Squad[]) => void;
+  replaceBoard: (board: Pick<FitSnapshot, "challenges" | "checkins" | "settlements">) => void;
   selectChallenge: (id: string | null) => void;
   createChallenge: (input: CreateChallengeInput) => { error?: string; id?: string };
   setProof: (
@@ -76,6 +77,27 @@ const empty: FitSnapshot = {
   selectedSquadId: null,
   selectedChallengeId: null,
 };
+
+function mergeDrafts(local: Checkin[], remote: Checkin[]): Checkin[] {
+  const key = (c: Checkin) => `${c.challengeId}:${c.memberId}:${c.dayIndex}`;
+  const map = new Map(remote.map((c) => [key(c), c]));
+  for (const draft of local) {
+    if (draft.sealedAt || draft.missed) continue;
+    if (draft.proofValue == null && draft.proofMinutes == null) continue;
+    const cur = map.get(key(draft));
+    if (!cur) {
+      map.set(key(draft), draft);
+      continue;
+    }
+    if (cur.sealedAt || cur.missed) continue;
+    map.set(key(draft), {
+      ...cur,
+      proofValue: draft.proofValue,
+      proofMinutes: draft.proofMinutes,
+    });
+  }
+  return [...map.values()];
+}
 
 function upsertCheckin(checkins: Checkin[], next: Checkin): Checkin[] {
   const rest = checkins.filter(
@@ -112,6 +134,18 @@ export const useFitStore = create<FitSnapshot & FitActions>()(
             s.selectedSquadId && next.some((q) => q.id === s.selectedSquadId)
               ? s.selectedSquadId
               : next[0]?.id ?? null,
+        })),
+      replaceBoard: (board) =>
+        set((s) => ({
+          challenges: board.challenges,
+          checkins: mergeDrafts(s.checkins, board.checkins),
+          settlements: board.settlements,
+          selectedChallengeId:
+            s.selectedChallengeId && board.challenges.some((c) => c.id === s.selectedChallengeId)
+              ? s.selectedChallengeId
+              : s.selectedChallengeId && board.challenges.length === 0
+                ? null
+                : s.selectedChallengeId,
         })),
       selectChallenge: (selectedChallengeId) => set({ selectedChallengeId, tab: "board" }),
 
@@ -244,6 +278,7 @@ export const useFitStore = create<FitSnapshot & FitActions>()(
           memberIds: squad.members.map((m) => m.id),
           lockTxHash: input.lockTxHash,
           potAddress: input.potAddress ?? squad.potAddress,
+          locks: input.lockTxHash ? [{ memberId: me.id, txHash: input.lockTxHash }] : [],
         };
         challenge.status = derivedStatus(challenge);
         set((s) => ({
@@ -436,12 +471,9 @@ export const useFitStore = create<FitSnapshot & FitActions>()(
       },
     }),
     {
-      name: "fiber-fit-v3",
+      name: "fiber-fit-v4",
       skipHydration: true,
       partialize: (s) => ({
-        challenges: s.challenges,
-        checkins: s.checkins,
-        settlements: s.settlements,
         availableCkb: s.availableCkb,
         selectedSquadId: s.selectedSquadId,
         selectedChallengeId: s.selectedChallengeId,

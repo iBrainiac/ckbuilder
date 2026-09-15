@@ -4,9 +4,19 @@ import { ccc } from "@ckb-ccc/connector-react";
 export const MIN_CELL_CKB = 62;
 
 const TESTNET_FAUCET = "https://faucet.nervos.org/";
+const JOYID_WALLET = "https://joy.id";
 
-export function faucetUrl(): string {
+export function isMainnet(): boolean {
+  return process.env.NEXT_PUBLIC_IS_MAINNET === "true";
+}
+
+export function faucetUrl(): string | null {
+  if (isMainnet()) return null;
   return TESTNET_FAUCET;
+}
+
+export function getWalletUrl(): string {
+  return JOYID_WALLET;
 }
 
 export function shannonToIntCkb(shannon: bigint): number {

@@ -56,6 +56,7 @@ export type Challenge = {
   memberIds: string[];
   potAddress?: string;
   lockTxHash?: string;
+  locks: { memberId: string; txHash: string }[];
 };
 
 export type Checkin = {
