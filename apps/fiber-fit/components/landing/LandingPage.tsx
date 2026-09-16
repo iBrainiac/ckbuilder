@@ -129,7 +129,7 @@ export default function LandingPage() {
               ))}
             </ol>
             <p className="mt-8 max-w-[56ch] text-[13px] leading-relaxed text-fog">
-              Money is integer CKB only. The pot is the squad creator's address until a contract holds it. Completer means every day sealed. If nobody completes, or nobody misses, everyone is refunded their stake.
+              Money is integer CKB only. The pot sits on the squad creator address until a contract holds it. Completer means every day sealed. If nobody completes, or nobody misses, everyone is refunded their stake.
             </p>
           </div>
         </section>

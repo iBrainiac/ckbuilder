@@ -23,6 +23,10 @@ const globalForDb = globalThis as unknown as {
   appSchemaRev?: number;
 };
 
+function isProduction() {
+  return process.env.NODE_ENV === "production";
+}
+
 function postgresUrl(): string | null {
   const url = process.env.DATABASE_URL?.trim();
   if (!url) return null;
@@ -37,7 +41,16 @@ async function ensureSchema(exec: SqlExec) {
 }
 
 async function openPostgres(url: string): Promise<{ db: AppDb; exec: SqlExec }> {
-  const sql = postgres(url, { max: 5, connect_timeout: 4 });
+  const needsSsl =
+    isProduction() ||
+    url.includes("supabase.com") ||
+    url.includes("sslmode=require");
+  const sql = postgres(url, {
+    max: isProduction() ? 1 : 5,
+    connect_timeout: 8,
+    prepare: false,
+    ssl: needsSsl ? "require" : undefined,
+  });
   await sql`select 1`;
   const exec: SqlExec = async (raw) => {
     await sql.unsafe(raw);
@@ -60,6 +73,16 @@ async function openPglite(): Promise<{ db: AppDb; exec: SqlExec }> {
 
 async function createDb(): Promise<AppDb> {
   const url = postgresUrl();
+  if (isProduction()) {
+    if (!url) {
+      throw new Error("DATABASE_URL is required in production.");
+    }
+    const opened = await openPostgres(url);
+    globalForDb.appDbExec = opened.exec;
+    globalForDb.appSchemaRev = SCHEMA_REV;
+    return opened.db;
+  }
+
   let opened: { db: AppDb; exec: SqlExec };
   if (url) {
     try {
